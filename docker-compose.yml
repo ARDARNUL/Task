@@ -29,6 +29,20 @@ services:
       - test_net
     depends_on:
       - app
+      - frontend
+
+  frontend:
+    image: node:22-alpine
+    container_name: test_frontend
+    restart: unless-stopped
+    working_dir: /var/www
+    command: sh -c "npm install && npm run dev"
+    volumes:
+      - ./src:/var/www
+    ports:
+      - "5173:5173"
+    networks:
+      - test_net
 
   db:
     image: mysql:8.4
