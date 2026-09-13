@@ -17,6 +17,11 @@ export async function show(id) {
     return data;
 }
 
+export async function destroy(id) {
+    const { data } = await client.delete(`/organizations/${id}`);
+    return data;
+}
+
 export async function sync(id) {
     const { data } = await client.post(`/organizations/${id}/sync`);
     return data;

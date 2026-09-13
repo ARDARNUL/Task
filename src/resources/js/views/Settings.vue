@@ -1,21 +1,12 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth';
 import { useOrganizationsStore } from '../stores/organizations';
 import OrganizationCard from '../components/OrganizationCard.vue';
 import Spinner from '../components/Spinner.vue';
+import DefaultLayout from '../layouts/DefaultLayout.vue';
 
-const auth = useAuthStore();
 const orgs = useOrganizationsStore();
-const router = useRouter();
-
 const yandexUrl = ref('');
-
-async function logout() {
-    await auth.logout();
-    router.push({ name: 'login' });
-}
 
 async function addOrganization() {
     if (!yandexUrl.value.trim()) return;
@@ -30,6 +21,11 @@ function onSync(id) {
     orgs.sync(id);
 }
 
+function onDelete(id) {
+    if (!window.confirm('Удалить эту организацию вместе со всеми отзывами?')) return;
+    orgs.remove(id);
+}
+
 onMounted(async () => {
     await orgs.fetchAll();
     orgs.startPolling();
@@ -41,24 +37,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-slate-100">
-        <header class="bg-white shadow">
-            <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-                <h1 class="text-lg font-semibold text-slate-900">Отзывы Яндекс.Карт</h1>
-                <div class="flex items-center gap-4">
-                    <span class="text-sm text-slate-500">{{ auth.user?.email }}</span>
-                    <button
-                        type="button"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                        @click="logout"
-                    >
-                        Выйти
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="mx-auto max-w-5xl space-y-6 px-6 py-8">
+    <DefaultLayout>
+        <div class="space-y-6">
             <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
                 <h2 class="text-lg font-semibold text-slate-900">Добавить организацию</h2>
                 <p class="mt-1 text-sm text-slate-500">
@@ -112,9 +92,10 @@ onBeforeUnmount(() => {
                         :key="org.id"
                         :organization="org"
                         @sync="onSync"
+                        @delete="onDelete"
                     />
                 </div>
             </section>
-        </main>
-    </div>
+        </div>
+    </DefaultLayout>
 </template>

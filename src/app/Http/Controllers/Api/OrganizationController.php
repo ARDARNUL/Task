@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ParseStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StoreOrganizationRequest;
 use App\Http\Resources\OrganizationResource;
@@ -11,7 +12,6 @@ use App\Models\Organization;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Auth;
 
 class OrganizationController extends Controller
 {
@@ -35,7 +35,7 @@ class OrganizationController extends Controller
             [
                 'user_id' => $user->id,
                 'yandex_url' => $url,
-                'parse_status' => \App\Enums\ParseStatus::Pending,
+                'parse_status' => ParseStatus::Pending,
                 'parse_error' => null,
             ]
         );
@@ -68,12 +68,21 @@ class OrganizationController extends Controller
         ]);
     }
 
+    public function destroy(Request $request, Organization $organization): JsonResponse
+    {
+        $this->authorizeOrganization($request, $organization);
+
+        $organization->delete();
+
+        return response()->json(['message' => 'Организация удалена.'], 200);
+    }
+
     public function sync(Request $request, Organization $organization): JsonResponse
     {
         $this->authorizeOrganization($request, $organization);
 
         $organization->update([
-            'parse_status' => \App\Enums\ParseStatus::Pending,
+            'parse_status' => ParseStatus::Pending,
             'parse_error' => null,
         ]);
 

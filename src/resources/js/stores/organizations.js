@@ -14,7 +14,7 @@ export const useOrganizationsStore = defineStore('organizations', () => {
         error.value = null;
         try {
             items.value = await orgApi.list();
-        } catch (e) {
+        } catch (_) {
             error.value = 'Не удалось загрузить список организаций.';
         } finally {
             loading.value = false;
@@ -25,7 +25,6 @@ export const useOrganizationsStore = defineStore('organizations', () => {
         error.value = null;
         try {
             const org = await orgApi.create(yandexUrl);
-            // Обновляем или добавляем в список
             const idx = items.value.findIndex((o) => o.id === org.id);
             if (idx >= 0) items.value[idx] = org;
             else items.value.unshift(org);
@@ -41,6 +40,15 @@ export const useOrganizationsStore = defineStore('organizations', () => {
                 error.value = 'Не удалось добавить организацию.';
             }
             return null;
+        }
+    }
+
+    async function remove(id) {
+        try {
+            await orgApi.destroy(id);
+            items.value = items.value.filter((o) => o.id !== id);
+        } catch (_) {
+            error.value = 'Не удалось удалить организацию.';
         }
     }
 
@@ -65,10 +73,6 @@ export const useOrganizationsStore = defineStore('organizations', () => {
         } catch (_) {}
     }
 
-    /**
-     * Запускает поллинг: пока есть организации в статусе pending/running,
-     * каждые 3 секунды дёргает GET /api/organizations.
-     */
     function startPolling() {
         stopPolling();
 
@@ -105,6 +109,7 @@ export const useOrganizationsStore = defineStore('organizations', () => {
         error,
         fetchAll,
         create,
+        remove,
         sync,
         refreshOne,
         startPolling,

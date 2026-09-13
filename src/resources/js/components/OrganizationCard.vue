@@ -7,7 +7,7 @@ const props = defineProps({
     organization: { type: Object, required: true },
 });
 
-const emit = defineEmits(['sync']);
+const emit = defineEmits(['sync', 'delete']);
 
 const statusBadge = computed(() => {
     const s = props.organization.parse_status;
@@ -98,6 +98,13 @@ const isProcessing = computed(
                     @click="emit('sync', organization.id)"
                 >
                     Синхронизировать
+                </button>
+                <button
+                    type="button"
+                    class="rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                    @click="emit('delete', organization.id)"
+                >
+                    Удалить
                 </button>
             </div>
         </div>

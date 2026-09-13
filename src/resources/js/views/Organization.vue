@@ -9,6 +9,7 @@ import {
 import ReviewCard from '../components/ReviewCard.vue';
 import Pagination from '../components/Pagination.vue';
 import Spinner from '../components/Spinner.vue';
+import DefaultLayout from '../layouts/DefaultLayout.vue';
 
 const props = defineProps({
     id: { type: String, required: true },
@@ -94,36 +95,34 @@ watch(
 </script>
 
 <template>
-    <div class="min-h-screen bg-slate-100">
-        <header class="bg-white shadow">
-            <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-                <div class="flex items-center gap-4">
-                    <button
-                        type="button"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                        @click="backToSettings"
-                    >
-                        ← Назад
-                    </button>
-                    <h1 class="text-lg font-semibold text-slate-900">
-                        {{ organization?.name || 'Организация' }}
-                    </h1>
-                </div>
+    <DefaultLayout>
+        <div class="mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-4">
                 <button
                     type="button"
-                    :disabled="syncing"
-                    class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    @click="sync"
+                    class="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                    @click="backToSettings"
                 >
-                    <span class="inline-flex items-center gap-2">
-                        <Spinner v-if="syncing" size="xs" />
-                        {{ syncing ? 'Синхронизация…' : 'Обновить данные' }}
-                    </span>
+                    ← Назад
                 </button>
+                <h1 class="text-lg font-semibold text-slate-900">
+                    {{ organization?.name || 'Организация' }}
+                </h1>
             </div>
-        </header>
+            <button
+                type="button"
+                :disabled="syncing"
+                class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                @click="sync"
+            >
+                <span class="inline-flex items-center gap-2">
+                    <Spinner v-if="syncing" size="xs" />
+                    {{ syncing ? 'Синхронизация…' : 'Обновить данные' }}
+                </span>
+            </button>
+        </div>
 
-        <main class="mx-auto max-w-5xl space-y-6 px-6 py-8">
+        <div class="space-y-6">
             <p
                 v-if="error"
                 class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700"
@@ -200,6 +199,13 @@ watch(
                         <Spinner size="lg" />
                     </div>
 
+                    <div
+                        v-else-if="reviews.length === 0"
+                        class="rounded-2xl bg-white p-8 text-center text-sm text-slate-500 shadow-sm ring-1 ring-slate-100"
+                    >
+                        Отзывов пока нет.
+                    </div>
+
                     <div v-else class="space-y-4">
                         <ReviewCard
                             v-for="review in reviews"
@@ -217,6 +223,6 @@ watch(
                     </div>
                 </section>
             </template>
-        </main>
-    </div>
+        </div>
+    </DefaultLayout>
 </template>

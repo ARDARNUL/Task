@@ -31,6 +31,7 @@ Route::middleware($statefulMiddleware)->group(function () {
         Route::get('/organizations', [OrganizationController::class, 'index'])->name('api.organizations.index');
         Route::post('/organizations', [OrganizationController::class, 'store'])->name('api.organizations.store');
         Route::get('/organizations/{organization}', [OrganizationController::class, 'show'])->name('api.organizations.show');
+        Route::delete('/organizations/{organization}', [OrganizationController::class, 'destroy'])->name('api.organizations.destroy');
         Route::post('/organizations/{organization}/sync', [OrganizationController::class, 'sync'])->name('api.organizations.sync');
 
         Route::get('/organizations/{organization}/reviews', [ReviewController::class, 'index'])->name('api.organizations.reviews.index');
