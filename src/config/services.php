@@ -18,6 +18,11 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'yandex_maps' => [
+        'parser_url' => env('YANDEX_MAPS_PARSER_URL', 'http://browser:3000'),
+        'timeout' => (int) env('YANDEX_MAPS_TIMEOUT', 300),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],
