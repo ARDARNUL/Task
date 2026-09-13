@@ -99,6 +99,8 @@ services:
     shm_size: "1gb"
     ports:
       - "3000:3000"
+    volumes:
+      - ./browser/server.js:/app/server.js:ro
     networks:
       - test_net
     healthcheck:
